@@ -1,0 +1,32 @@
+html, body, .App{
+    height: 100%;
+    overflow: hidden;
+    background-color: lightblue;
+
+}
+
+canvas{
+    overflow: hidden;
+    display: block;
+    /* height: calc(100% - 3rem);
+    width: 100%; */
+    /* width: 1024px;
+    height: 576px; */
+    /* width: 800px;
+    height: 800px; */
+    margin: 0 auto;
+    padding: 0;
+}
+main{
+    position: absolute;
+    width: 100%;
+    top: 3rem;
+    height: calc(100% - 3rem);
+    background-color: rgba(100,100,100,0.2);
+    overflow: auto;
+}
+.App-header{
+    width: 100%;
+    height: 3rem;
+    background-color: lightcoral;
+}
