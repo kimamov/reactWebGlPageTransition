@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import './styles/main.css';
 import vertexShaderSource from './shaders/vertex-shader.js';
 import fragmentShaderSource from './shaders/fragment-shader.js';
-import createWebGlCanvas from './createCanvas.js';
+import createWebGlCanvas from './createMultTexture.js';
+import imageOne from './imageOne.jpg'
+
 
 export default class App extends Component {
   constructor(props) {
@@ -13,14 +15,14 @@ export default class App extends Component {
     this.webGlContext=null;
 
     this.state = {
-       
     }
   }
 
   componentDidMount(){
     this.createWebGlContext();
     this.resizeCanvas(this.webGlContext);
-    createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource);
+    createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, imageOne);
+
   }
 
   createWebGlContext=()=>{
@@ -56,6 +58,7 @@ export default class App extends Component {
         </header>
         <canvas style={{height: `${this.canvasHeight}px`,width: `${this.canvasWidth}px`}} ref={this.canvasRef}/>
         <main>
+
         </main>
         
       </div>
