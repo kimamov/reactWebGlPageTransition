@@ -22,7 +22,7 @@ const main=function(gl, vertexShader, fragmentShader, imageSrc) {
   
     // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    // Set a rectangle the same size as the image.
+    // Set a rectangle the same size as the image
     setRectangle(gl, 0, 0, image.width, image.height);
   
     // provide texture coordinates for the rectangle.
