@@ -4,29 +4,33 @@ import vertexShaderSource from './shaders/vertex-shader.js';
 import fragmentShaderSource from './shaders/fragment-shader.js';
 import createWebGlCanvas from './createMultTexture.js';
 import imageOne from './imageOne.jpg'
+import imageTwo from './imgTwo.jpg'
 
 
 export default class App extends Component {
   constructor(props) {
     super(props)
     this.canvasRef=React.createRef();
-    this.canvasWidth=1600;
-    this.canvasHeight=900;
+    /* this.canvasWidth=1900;
+    this.canvasHeight=400; */
     this.webGlContext=null;
-
     this.state = {
     }
   }
 
   componentDidMount(){
     this.createWebGlContext();
-    this.resizeCanvas(this.webGlContext);
+    this.resizeCanvas(this.webGlContext.canvas);
     createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, imageOne);
-
+    window.addEventListener("resize",()=>{
+      // handle resize feed shader new values after resize
+      this.resizeCanvas(this.webGlContext.canvas)
+      createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, imageOne);
+    })
   }
 
+
   createWebGlContext=()=>{
-    console.log(this.canvasRef.current)
     this.webGlContext=this.canvasRef.current.getContext("webgl");
     if(!this.webGlContext){
       alert("your machine does not support webGl")
@@ -34,29 +38,22 @@ export default class App extends Component {
   }
 
 
+
   resizeCanvas=(canvas)=>{
-    /* canvas.canvas.width=canvas.displayWidth;
-    canvas.canvas.height=canvas.displayHeight; */
-    
-    /* canvas.canvas.width=1024;
-    canvas.canvas.height=576; */
-
-    canvas.canvas.width=this.canvasWidth;
-    canvas.canvas.height=this.canvasHeight;
-
+    canvas.width=canvas.clientWidth;
+    canvas.height=canvas.clientHeight;
   }
 
 
 
 
   render() {
-    console.log(this.webGlContext?this.webGlContext.canvas.width: "nothing yet")
     return (
       <div className="App">
         <header className="App-header">
      
         </header>
-        <canvas style={{height: `${this.canvasHeight}px`,width: `${this.canvasWidth}px`}} ref={this.canvasRef}/>
+        <canvas /* style={{height: `${this.canvasHeight}px`,width: `${this.canvasWidth}px`}} */ ref={this.canvasRef}/>
         <main>
 
         </main>
