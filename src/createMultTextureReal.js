@@ -27,7 +27,8 @@
     const program = createShaderProgram(gl, vertexShader, fragmentShader);
   
     // look up where the vertex data needs to go.
-    let positionLocation = gl.getAttribLocation(program, "position");
+    let positionLocation = gl.getAttribLocation(program, "a_position");
+    let texcoordLocation = gl.getAttribLocation(program, "a_texCoord");
   
     // Create a buffer to put three 2d clip space points in
     let positionBuffer = gl.createBuffer();
@@ -35,16 +36,20 @@
     // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     // Set a rectangle the same size as the image
+    setRectangle(gl, 0, 0, images[0].width, images[0].height);
+
+    // provide texture coordinates for the rectangle.
+    var texcoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-        -1, -1,  // tri 1
-         1, -1,
-        -1,  1,      
-        -1,  1,  // tri 2
-         1, -1,
-         1,  1,
-      ]), gl.STATIC_DRAW);
-
-
+        0.0,  0.0,
+        1.0,  0.0,
+        0.0,  1.0,
+        0.0,  1.0,
+        1.0,  0.0,
+        1.0,  1.0,
+    ]), gl.STATIC_DRAW);
+  
     // create 2 textures
     var textures = [];
     for (var ii = 0; ii < 2; ++ii) {
@@ -64,6 +69,8 @@
       textures.push(texture);
     }
   
+    // lookup uniforms
+    var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
   
     // lookup the sampler locations.
     var u_image0Location = gl.getUniformLocation(program, "u_image0");
@@ -84,57 +91,6 @@
   
     // Bind the position buffer.
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-
-  let image=images[0];
-  const canvasAspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-  const imageAspect = image.width / image.height;
-  let scaleX;
-  let scaleY;
-  let scaleMode="cover";
-
-  switch (scaleMode) {
-    case 'fitV':
-      scaleY = 1;
-      scaleX = imageAspect / canvasAspect;
-      break;
-    case 'fitH':
-      scaleX = 1;
-      scaleY = canvasAspect / imageAspect;
-      break;
-    case 'contain':
-      scaleY = 1;
-      scaleX = imageAspect / canvasAspect;
-      if (scaleX > 1) {
-        scaleY = 1 / scaleX;
-        scaleX = 1;
-      }
-      break;
-    case 'cover':
-      scaleY = 1;
-      scaleX = imageAspect / canvasAspect;
-      if (scaleX < 1) {
-        scaleY = 1 / scaleX;
-        scaleX = 1;
-      }
-      break;
-    default: 
-        scaleY = 1;
-        scaleX = imageAspect / canvasAspect;
-        if (scaleX < 1) {
-            scaleY = 1 / scaleX;
-            scaleX = 1;
-        }
-  }
-
-  let u_matrix = gl.getUniformLocation(program, "u_matrix");
-  gl.uniformMatrix4fv(u_matrix, false, new Float32Array([
-    scaleX, 0, 0, 0,
-    0, -scaleY, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1,
-  ]))
-
   
     // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
     var size = 2;          // 2 components per iteration
@@ -144,8 +100,25 @@
     var offset = 0;        // start at the beginning of the buffer
     gl.vertexAttribPointer(
         positionLocation, size, type, normalize, stride, offset);
-
-
+  
+    // Turn on the teccord attribute
+    gl.enableVertexAttribArray(texcoordLocation);
+  
+    // Bind the position buffer.
+    gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+  
+    // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+    var size = 2;          // 2 components per iteration
+    var type = gl.FLOAT;   // the data is 32bit floats
+    var normalize = false; // don't normalize the data
+    var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+    var offset = 0;        // start at the beginning of the buffer
+    gl.vertexAttribPointer(
+        texcoordLocation, size, type, normalize, stride, offset);
+  
+    // set the resolution
+    gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
+  
     // set which texture units to render with.
     gl.uniform1i(u_image0Location, 0);  // texture unit 0
     gl.uniform1i(u_image1Location, 1);  // texture unit 1
@@ -160,7 +133,20 @@
     gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
   
-
+  function setRectangle(gl, x, y, width, height) {
+    let x1 = x;
+    let x2 = x + width;
+    let y1 = y;
+    let y2 = y + height;
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+       x1, y1,
+       x2, y1,
+       x1, y2,
+       x1, y2,
+       x2, y1,
+       x2, y2,
+    ]), gl.STATIC_DRAW);
+  }
   
 
   const createShaderProgram = (gl, vertexShaderSource, fragmentShaderSource) => {

@@ -21,11 +21,11 @@ export default class App extends Component {
   componentDidMount(){
     this.createWebGlContext();
     this.resizeCanvas(this.webGlContext.canvas);
-    createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, imageOne);
+    createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne]);
     window.addEventListener("resize",()=>{
       // handle resize feed shader new values after resize
       this.resizeCanvas(this.webGlContext.canvas)
-      createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, imageOne);
+      createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne]);
     })
   }
 
