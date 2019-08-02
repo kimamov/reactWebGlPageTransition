@@ -4,13 +4,14 @@ import vertexShaderSource from './shaders/vertex-shader.js';
 import fragmentShaderSource from './shaders/fragment-shader.js';
 import createWebGlCanvas from './createMultTexture.js';
 import imageOne from './imageOne.jpg'
-import imageTwo from './imgTwo.jpg'
+import imageTwo from './imageTwo.jpg'
 
 
 export default class App extends Component {
   constructor(props) {
     super(props)
     this.canvasRef=React.createRef();
+    this.scrollRef=React.createRef();
     /* this.canvasWidth=1900;
     this.canvasHeight=400; */
     this.webGlContext=null;
@@ -21,12 +22,20 @@ export default class App extends Component {
   componentDidMount(){
     this.createWebGlContext();
     this.resizeCanvas(this.webGlContext.canvas);
-    createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne]);
+    createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne], this.scrollRef);
     window.addEventListener("resize",()=>{
       // handle resize feed shader new values after resize
       this.resizeCanvas(this.webGlContext.canvas)
       createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne]);
     })
+
+    //this.scrollRef.current.addEventListener("scroll",this.handleScroll)
+  }
+
+  handleScroll=(event)=>{
+    const scrollVal=event.target.scrollTop;
+    const maxScroll=event.target.scrollHeight-event.target.clientHeight;
+    document.title=scrollVal/maxScroll;
   }
 
 
@@ -54,8 +63,8 @@ export default class App extends Component {
      
         </header>
         <canvas /* style={{height: `${this.canvasHeight}px`,width: `${this.canvasWidth}px`}} */ ref={this.canvasRef}/>
-        <main>
-
+        <main ref={this.scrollRef}>
+          <div className={"content"}></div>
         </main>
         
       </div>

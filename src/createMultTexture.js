@@ -1,13 +1,5 @@
-/* const main=function(gl, vertexShader, fragmentShader, imageSrcOne, imageSrcTwo) {
-    let imageOne = new Image();
-    imageOne.src = imageSrcOne;
-    imageOne.onload = function() {
-      console.log(image.width)
-      render(imageOne, imageTwo, gl, vertexShader, fragmentShader);
-    };
-  } */
 
-  const main=function(gl, vertexShader, fragmentShader, imageArray) {
+  const main=function(gl, vertexShader, fragmentShader, imageArray, scrollRef) {
     let imageOutput=[]
     imageArray.forEach(element=>{
         let image=new Image();
@@ -15,13 +7,14 @@
         image.onload=()=>{
             imageOutput.push((image))
             if(imageOutput.length===imageArray.length){
-                render(imageOutput, gl, vertexShader, fragmentShader);
+                render(imageOutput, scrollRef, gl, vertexShader, fragmentShader);
             }
         }
     })    
   }
   
-  function render(images, gl, vertexShader, fragmentShader) {
+  function render(images, scrollRef, gl, vertexShader, fragmentShader) {
+    
 
     // setup GLSL program
     const program = createShaderProgram(gl, vertexShader, fragmentShader);
@@ -66,11 +59,27 @@
   
   
     // lookup the sampler locations.
-    var u_image0Location = gl.getUniformLocation(program, "u_image0");
-    var u_image1Location = gl.getUniformLocation(program, "u_image1");
+    const u_image0Location = gl.getUniformLocation(program, "u_image0");
+    const u_image1Location = gl.getUniformLocation(program, "u_image1");
+
+    const u_scrollValLocation=gl.getUniformLocation(program, "u_scrollVal");
+    let scrollAmount=0.0;
+    gl.uniform1f(u_scrollValLocation, scrollAmount); 
+
+    scrollRef.current.addEventListener("scroll",(event)=>{
+      const scrollVal=event.target.scrollTop;
+      const maxScroll=event.target.scrollHeight-event.target.clientHeight;
+      if((Math.abs((scrollVal/maxScroll)-scrollAmount)>0.05) || scrollVal/maxScroll===0){
+        scrollAmount=scrollVal/maxScroll;
+
+        gl.uniform1f(u_scrollValLocation,scrollAmount);
+        drawLoop(); 
+      }
+
+    })
   
-  
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    const drawLoop=()=>{
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   
     // Clear the canvas
     gl.clearColor(0, 0, 0, 0);
@@ -84,6 +93,9 @@
   
     // Bind the position buffer.
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+    
+
 
 
   let image=images[0];
@@ -137,11 +149,11 @@
 
   
     // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 2;          // 2 components per iteration
-    var type = gl.FLOAT;   // the data is 32bit floats
-    var normalize = false; // don't normalize the data
-    var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-    var offset = 0;        // start at the beginning of the buffer
+    let size = 2;          // 2 components per iteration
+    let type = gl.FLOAT;   // the data is 32bit floats
+    let normalize = false; // don't normalize the data
+    let stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+    let offset = 0;        // start at the beginning of the buffer
     gl.vertexAttribPointer(
         positionLocation, size, type, normalize, stride, offset);
 
@@ -158,6 +170,9 @@
   
     // Draw the rectangle.
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+    drawLoop()
+    
   }
   
 
