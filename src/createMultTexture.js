@@ -69,7 +69,7 @@
     scrollRef.current.addEventListener("scroll",(event)=>{
       const scrollVal=event.target.scrollTop;
       const maxScroll=event.target.scrollHeight-event.target.clientHeight;
-      if((Math.abs((scrollVal/maxScroll)-scrollAmount)>0.05) || scrollVal/maxScroll===0){
+      if(true/* (Math.abs((scrollVal/maxScroll)-scrollAmount)>0.05) || scrollVal/maxScroll===0 */){
         scrollAmount=scrollVal/maxScroll;
 
         gl.uniform1f(u_scrollValLocation,scrollAmount);

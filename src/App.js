@@ -12,8 +12,6 @@ export default class App extends Component {
     super(props)
     this.canvasRef=React.createRef();
     this.scrollRef=React.createRef();
-    /* this.canvasWidth=1900;
-    this.canvasHeight=400; */
     this.webGlContext=null;
     this.state = {
     }
@@ -21,15 +19,15 @@ export default class App extends Component {
 
   componentDidMount(){
     this.createWebGlContext();
-    this.resizeCanvas(this.webGlContext.canvas);
-    createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne], this.scrollRef);
-    window.addEventListener("resize",()=>{
-      // handle resize feed shader new values after resize
-      this.resizeCanvas(this.webGlContext.canvas)
-      createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne]);
-    })
-
-    //this.scrollRef.current.addEventListener("scroll",this.handleScroll)
+    if(this.canvasRef.current && this.scrollRef.current){
+      this.resizeCanvas(this.webGlContext.canvas);
+      createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne], this.scrollRef);
+      window.addEventListener("resize",()=>{
+        // handle resize feed shader new values after resize
+        this.resizeCanvas(this.webGlContext.canvas)
+        createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne], this.scrollRef);
+      })
+    }
   }
 
   handleScroll=(event)=>{
@@ -62,7 +60,7 @@ export default class App extends Component {
         <header className="App-header">
      
         </header>
-        <canvas /* style={{height: `${this.canvasHeight}px`,width: `${this.canvasWidth}px`}} */ ref={this.canvasRef}/>
+        <canvas ref={this.canvasRef}/>
         <main ref={this.scrollRef}>
           <div className={"content"}></div>
         </main>
