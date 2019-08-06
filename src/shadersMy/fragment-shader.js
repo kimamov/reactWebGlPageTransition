@@ -12,7 +12,6 @@ float texTransition(vec2 pos, float limit, float delay){
 
  
   float posDistance=limit-((pos.x+pos.y)/(2.0+2.0*delay));
-  //float posDistance=limit-((pos.x*pos.y)/(1.0+delay));
 
 
   if(posDistance<=0.0){
@@ -22,7 +21,7 @@ float texTransition(vec2 pos, float limit, float delay){
     return 1.0;
   }
   if(posDistance>0.0){
-    return /* abs(posDistance/delay) */ (posDistance/delay)*(posDistance/delay);
+    return abs(posDistance/delay);
   }
 }
 
@@ -48,10 +47,9 @@ void main() {
   /* vec4 red=vec4(1.0,0.0,0.0,1.0);
   vec4 green=vec4(0.0,1.0,0.0,1.0); */
 
-  /* REAL */
-  gl_FragColor = mix(color0, color1, texTransition(v_texCoord, u_scrollVal, 0.2));
 
-  //gl_FragColor = mix(red, green, (v_texCoord.y+u_scrollVal)*0.0);
+  gl_FragColor = mix(color0, color1, texTransition(v_texCoord, u_scrollVal, 0.2));
+  //gl_FragColor = mix(red, green, texTransition(v_texCoord, u_scrollVal, 0.2));
 
 
 }

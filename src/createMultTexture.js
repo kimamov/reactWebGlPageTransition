@@ -39,9 +39,9 @@
 
 
     // create 2 textures
-    var textures = [];
-    for (var ii = 0; ii < 2; ++ii) {
-      var texture = gl.createTexture();
+    let textures = [];
+    for (let ii = 0; ii < 2; ++ii) {
+      let texture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, texture);
   
       // Set the parameters so we can render any size image.
@@ -62,24 +62,22 @@
     const u_image0Location = gl.getUniformLocation(program, "u_image0");
     const u_image1Location = gl.getUniformLocation(program, "u_image1");
 
-    const u_scrollValLocation=gl.getUniformLocation(program, "u_scrollVal");
     let scrollAmount=0.0;
-    gl.uniform1f(u_scrollValLocation, scrollAmount); 
 
     scrollRef.current.addEventListener("scroll",(event)=>{
       const scrollVal=event.target.scrollTop;
       const maxScroll=event.target.scrollHeight-event.target.clientHeight;
       if(true/* (Math.abs((scrollVal/maxScroll)-scrollAmount)>0.05) || scrollVal/maxScroll===0 */){
         scrollAmount=scrollVal/maxScroll;
-
-        gl.uniform1f(u_scrollValLocation,scrollAmount);
         drawLoop(); 
       }
 
     })
   
+
+    /* CALL WHEN SOMETHING CHANGES */
     const drawLoop=()=>{
-      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   
     // Clear the canvas
     gl.clearColor(0, 0, 0, 0);
@@ -147,7 +145,11 @@
     0, 0, 0, 1,
   ]))
 
-  
+  const u_scrollValLocation=gl.getUniformLocation(program, "u_scrollVal");
+  gl.uniform1f(u_scrollValLocation, scrollAmount); 
+
+
+
     // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
     let size = 2;          // 2 components per iteration
     let type = gl.FLOAT;   // the data is 32bit floats
