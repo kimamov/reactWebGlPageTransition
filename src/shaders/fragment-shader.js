@@ -45,17 +45,6 @@ void main() {
   vec4 color1 = texture2D(u_image1, mirrorTexCoordTwo);
 
 
-
-  //gl_FragColor = mix(color0, color1, ((v_texCoord.x+v_texCoord.y)/2.0)>u_scrollVal? 1.0 : 0.0);
-  //gl_FragColor = mix(color0, color1, ((v_texCoord.x+v_texCoord.y)/2.0)-u_scrollVal);
-  
-  /* vec4 red=vec4(1.0,0.0,0.0,1.0);
-  vec4 green=vec4(0.0,1.0,0.0,1.0);
-  gl_FragColor = mix(red, green, texTransition(v_texCoord, u_scrollVal, 0.2)); */
-  
- 
-
-  /* REAL */
   gl_FragColor = mix(color0, color1, texTransition(v_texCoord, u_scrollVal, 0.2));
 
 
