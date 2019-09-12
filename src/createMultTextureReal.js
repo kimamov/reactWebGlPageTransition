@@ -93,26 +93,24 @@
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
   
     // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 2;          // 2 components per iteration
-    var type = gl.FLOAT;   // the data is 32bit floats
-    var normalize = false; // don't normalize the data
-    var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-    var offset = 0;        // start at the beginning of the buffer
+    let size = 2;          // 2 components per iteration
+    let type = gl.FLOAT;   // the data is 32bit floats
+    let normalize = false; // don't normalize the data
+    let stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+    let offset = 0;        // start at the beginning of the buffer
     gl.vertexAttribPointer(
         positionLocation, size, type, normalize, stride, offset);
   
     // Turn on the teccord attribute
     gl.enableVertexAttribArray(texcoordLocation);
   
-    // Bind the position buffer.
     gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
   
-    // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 2;          // 2 components per iteration
-    var type = gl.FLOAT;   // the data is 32bit floats
-    var normalize = false; // don't normalize the data
-    var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-    var offset = 0;        // start at the beginning of the buffer
+    size = 2;          
+    type = gl.FLOAT;   
+    normalize = false; 
+    stride = 0;        
+    offset = 0;        
     gl.vertexAttribPointer(
         texcoordLocation, size, type, normalize, stride, offset);
   
