@@ -16,8 +16,6 @@ vec2 mirrored(vec2 vecIn) {
 
 float texTransition(vec2 pos, float limit, float delay){
 
-
- 
   float posDistance=limit-((pos.x+pos.y)/(2.0+2.0*delay));
   //float posDistance=limit-((pos.x*pos.y)/(1.0+delay));
 
@@ -36,10 +34,13 @@ float texTransition(vec2 pos, float limit, float delay){
 
 void main() {
 
+  /* modifiers how much the textures get moved on scroll. keep it at integers */
+  vec2 texOneMod=vec2(3.0,2.0);
+  vec2 texTwoMod=vec2(2.0,-3.0);
   
 
-  vec2 mirrorTexCoordOne=mirrored(vec2(v_texCoord.x+u_scrollVal*2.0,v_texCoord.y+u_scrollVal));
-  vec2 mirrorTexCoordTwo=mirrored(vec2(v_texCoord.x+u_scrollVal,v_texCoord.y-u_scrollVal*2.0));
+  vec2 mirrorTexCoordOne=mirrored(vec2(v_texCoord.x+(u_scrollVal*texOneMod.x),v_texCoord.y+(u_scrollVal*texOneMod.y)));
+  vec2 mirrorTexCoordTwo=mirrored(vec2(v_texCoord.x+(u_scrollVal*texTwoMod.x),v_texCoord.y+(u_scrollVal*texTwoMod.y)));
 
   vec4 color0 = texture2D(u_image0, mirrorTexCoordOne);
   vec4 color1 = texture2D(u_image1, mirrorTexCoordTwo);

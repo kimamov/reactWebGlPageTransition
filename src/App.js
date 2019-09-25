@@ -21,11 +21,11 @@ export default class App extends Component {
     this.createWebGlContext();
     if(this.canvasRef.current && this.scrollRef.current){
       this.resizeCanvas(this.webGlContext.canvas);
-      createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne], this.scrollRef);
+      createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne, imageTwo, imageOne], this.scrollRef);
       window.addEventListener("resize",()=>{
         // handle resize feed shader new values after resize
         this.resizeCanvas(this.webGlContext.canvas)
-        createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne], this.scrollRef);
+        createWebGlCanvas(this.webGlContext, vertexShaderSource, fragmentShaderSource, [imageTwo, imageOne, imageTwo, imageOne], this.scrollRef);
       })
     }
   }

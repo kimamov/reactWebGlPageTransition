@@ -1,12 +1,15 @@
 
   const main=function(gl, vertexShader, fragmentShader, imageArray, scrollRef) {
     let imageOutput=[]
-    imageArray.forEach(element=>{
+    let imageCreatedCount=0;
+    imageArray.forEach((element, index)=>{
         let image=new Image();
         image.src=element;
         image.onload=()=>{
-            imageOutput.push((image))
-            if(imageOutput.length===imageArray.length){
+            //imageOutput.push((image))
+            imageOutput[index]=image;
+            imageCreatedCount++;
+            if(imageCreatedCount===imageArray.length){
                 render(imageOutput, scrollRef, gl, vertexShader, fragmentShader);
             }
         }
@@ -25,7 +28,6 @@
     // Create a buffer to put three 2d clip space points in
     let positionBuffer = gl.createBuffer();
   
-    // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     // Set a rectangle the same size as the image
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
@@ -38,9 +40,9 @@
       ]), gl.STATIC_DRAW);
 
 
-    // create 2 textures
+    // create texture for every image in images array
     let textures = [];
-    for (let ii = 0; ii < 2; ++ii) {
+    for (let i = 0; i < images.length; ++i) {
       let texture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, texture);
   
@@ -51,7 +53,7 @@
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   
       // Upload the image into the texture.
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, images[ii]);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, images[i]);
   
       // add the texture to the array of textures.
       textures.push(texture);
@@ -63,20 +65,29 @@
     const u_image1Location = gl.getUniformLocation(program, "u_image1");
 
     let scrollAmount=0.0;
+    let textureOffset=0;
 
     scrollRef.current.addEventListener("scroll",(event)=>{
       const scrollVal=event.target.scrollTop;
-      const maxScroll=event.target.scrollHeight-event.target.clientHeight;
+      //const maxScroll=event.target.scrollHeight-event.target.clientHeight;
+      const maxScroll=event.target.clientHeight;
       if(true/* (Math.abs((scrollVal/maxScroll)-scrollAmount)>0.05) || scrollVal/maxScroll===0 */){
-        scrollAmount=scrollVal/maxScroll;
-        drawLoop(); 
+        let newTextureOffset=Math.floor(event.target.scrollTop/event.target.clientHeight);
+        // only changed offset if there are still textures in the array (2 textures min required)
+        if(newTextureOffset+2<=textures.length){
+          /* avoids x%1 going to 0 in the end and resetting transition */
+          scrollAmount=(scrollVal/maxScroll)%1;
+          textureOffset=newTextureOffset;
+          console.log(textureOffset)
+        }
+        drawLoop(textureOffset); 
       }
 
     })
   
 
     /* CALL WHEN SOMETHING CHANGES */
-    const drawLoop=()=>{
+    const drawLoop=(textureOffset=0)=>{
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   
     // Clear the canvas
@@ -166,16 +177,17 @@
   
     // Set each texture unit to use a particular texture.
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, textures[0]);
+    gl.bindTexture(gl.TEXTURE_2D, textures[0+textureOffset]);
     gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, textures[1]);
+    gl.bindTexture(gl.TEXTURE_2D, textures[1+textureOffset]);
   
     // Draw the rectangle.
     gl.drawArrays(gl.TRIANGLES, 0, 6);
-    }
+    }// end drawLoop()
+    
     drawLoop()
     
-  }
+  } 
   
 
   
@@ -189,6 +201,8 @@
 
       return program
   }
+
+  
   const createShader = (gl, type, source) => {
       const shader = gl.createShader(type);
       gl.shaderSource(shader, source);
